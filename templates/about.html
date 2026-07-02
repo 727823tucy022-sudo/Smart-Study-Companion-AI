@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="glass-card p-5 animate-fade-in-up">
+    <h1 class="fw-bold mb-3">Project Overview</h1>
+    <p class="lead opacity-75">The Smart Study Companion AI project is an optimization application designed to leverage historical multi-variant behavioral lifestyle student logs to model student focus metrics.</p>
+    
+    <hr class="my-4 border-secondary border-opacity-10">
+
+    <h3 class="fw-bold mb-3 h4">Architectural Technology Blueprint Stacks</h3>
+    <div class="row g-4 mt-1">
+        <div class="col-md-6 col-lg-3">
+            <div class="p-3 bg-dark bg-opacity-20 rounded border border-secondary border-opacity-10 text-center">
+                <i class="bi bi-braces text-primary fs-3"></i>
+                <h5 class="fw-bold mt-2 text-sm">Flask Backend</h5>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="p-3 bg-dark bg-opacity-20 rounded border border-secondary border-opacity-10 text-center">
+                <i class="bi bi-database text-success fs-3"></i>
+                <h5 class="fw-bold mt-2 text-sm">SQLite Datastore</h5>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="p-3 bg-dark bg-opacity-20 rounded border border-secondary border-opacity-10 text-center">
+                <i class="bi bi-calculator text-warning fs-3"></i>
+                <h5 class="fw-bold mt-2 text-sm">Scikit-Learn ML</h5>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="p-3 bg-dark bg-opacity-20 rounded border border-secondary border-opacity-10 text-center">
+                <i class="bi bi-palette text-pink fs-3"></i>
+                <h5 class="fw-bold mt-2 text-sm">Bootstrap Theme UI</h5>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="fw-bold mt-5 mb-3 h4">Algorithmic Training Strategy Lifecycle</h3>
+    <p class="opacity-75">Our operational pipelines execute systematic data mapping loops. Linear vectors, clustering indicators, and decision trees calculate and split optimization data into stratified partitions. Models are selected via weighted validation scoring, matching runtime confidence metrics with local persistent datastore nodes.</p>
+</div>
+{% endblock %}

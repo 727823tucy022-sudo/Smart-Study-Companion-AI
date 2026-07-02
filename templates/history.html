@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="animate-fade-in-up">
+    <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap gap-3">
+        <div>
+            <h1 class="fw-bold mb-1">Prediction Records History</h1>
+            <p class="text-muted mb-0">Locally cached persistent database transaction logs.</p>
+        </div>
+        <button class="btn btn-outline-info glass-card text-reset fw-semibold" id="exportCsvBtn"><i class="bi bi-file-earmark-spreadsheet me-2"></i>Export Records to CSV</button>
+    </div>
+
+    <div class="glass-card p-3 mb-4">
+        <div class="input-group">
+            <span class="input-group-text bg-transparent border-secondary text-muted"><i class="bi bi-search"></i></span>
+            <input type="text" id="tableFilterSearchInput" class="form-control bg-transparent border-secondary text-reset" placeholder="Filter histories via classification label output (High, Medium, Low)...">
+        </div>
+    </div>
+
+    <div class="glass-card p-4">
+        <div class="table-responsive table-responsive-custom">
+            <table class="table table-custom align-middle mb-0" id="historicalLedgerDatatable">
+                <thead>
+                    <tr>
+                        <th>Execution Date</th>
+                        <th>Sleep (Hrs)</th>
+                        <th>Study (Hrs)</th>
+                        <th>Stress Level</th>
+                        <th>Mood Index</th>
+                        <th>Break Counts</th>
+                        <th>Target Level</th>
+                        <th>Confidence</th>
+                        <th class="text-center">System Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="historyTableBodyRowsContainer">
+                    </tbody>
+            </table>
+        </div>
+        <div id="fallbackEmptyTableMessage" class="text-center p-5 d-none">
+            <i class="bi bi-folder-x text-muted" style="font-size: 3rem;"></i>
+            <p class="text-muted mt-2 mb-0">No historical prediction entries found inside the datastore database.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    let localHistoryDatasetMemoryCache = [];
+
+    document.addEventListener('DOMContentLoaded', fetchHistoryDataFromDatabaseEngine);
+
+    async function fetchHistoryDataFromDatabaseEngine() {
+        try {
+            const response = await fetch('/api/history');
+            if (!response.ok) throw new Error("API Network connection failed to establish.");
+            localHistoryDatasetMemoryCache = await response.json();
+            renderTableRecords(localHistoryDatasetMemoryCache);
+        } catch (error) {
+            console.error("Critical Failure fetching ledger logs:", error);
+            showToastNotification("Database link failed to transfer historical arrays.", "danger");
+        }
+    }
+
+    function renderTableRecords(recordsList) {
+        const tableBody = document.getElementById('historyTableBodyRowsContainer');
+        const fallback = document.getElementById('fallbackEmptyTableMessage');
+        tableBody.innerHTML = '';
+
+        if (recordsList.length === 0) {
+            fallback.classList.remove('d-none');
+            return;
+        }
+        fallback.classList.add('d-none');
+
+        recordsList.forEach(item => {
+            const row = document.createElement('tr');
+            
+            let statusBadgeColor = 'bg-secondary';
+            if (item.productivity_level === 'High') statusBadgeColor = 'bg-success';
+            if (item.productivity_level === 'Medium') statusBadgeColor = 'bg-warning text-dark';
+            if (item.productivity_level === 'Low') statusBadgeColor = 'bg-danger';
+
+            row.innerHTML = `
+                <td class="font-monospace text-sm">${item.timestamp}</td>
+                <td>${item.sleep_hours}</td>
+                <td>${item.study_hours}</td>
+                <td>${item.stress_level}/10</td>
+                <td>${item.mood === 3 ? 'High' : item.mood === 2 ? 'Neutral' : 'Low'}</td>
+                <td>${item.break_count}</td>
+                <td><span class="badge ${statusBadgeColor}">${item.productivity_level}</span></td>
+                <td class="fw-bold">${item.confidence}%</td>
+                <td class="text-center">
+                    <button class="btn btn-sm btn-outline-danger border-0" onclick="deleteRecordFromLedger(${item.id})"><i class="bi bi-trash3-fill"></i></button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+    }
+
+    // Client-side search filtering framework logic 
+    document.getElementById('tableFilterSearchInput').addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        const filtered = localHistoryDatasetMemoryCache.filter(item => 
+            item.productivity_level.toLowerCase().includes(query)
+        );
+        renderTableRecords(filtered);
+    });
+
+    async function deleteRecordFromLedger(id) {
+        if (!confirm("Are you sure you want to permanently delete this prediction entry?")) return;
+        try {
+            const res = await fetch(`/api/history/delete/${id}`, { method: 'DELETE' });
+            const data = await res.json();
+            if (data.status === 'success') {
+                showToastNotification("Entry deleted successfully.");
+                fetchHistoryDataFromDatabaseEngine();
+            } else {
+                throw new Error(data.message);
+            }
+        } catch (err) {
+            showToastNotification("Failed to delete record.", "danger");
+        }
+    }
+
+    // CSV Document Conversion Module Architecture
+    document.getElementById('exportCsvBtn').addEventListener('click', () => {
+        if (localHistoryDatasetMemoryCache.length === 0) {
+            showToastNotification("No data records available to compile into CSV format.", "warning");
+            return;
+        }
+        
+        let csvContent = "data:text/csv;charset=utf-8,";
+        csvContent += "ID,Timestamp,Sleep Hours,Study Hours,Stress Level,Mood,Break Count,Productivity Level,Confidence\n";
+        
+        localHistoryDatasetMemoryCache.forEach(r => {
+            csvContent += `${r.id},${r.timestamp},${r.sleep_hours},${r.study_hours},${r.stress_level},${r.mood},${r.break_count},${r.productivity_level},${r.confidence}\n`;
+        });
+        
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `StudyCompanion_Export_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+</script>
+{% endblock %}

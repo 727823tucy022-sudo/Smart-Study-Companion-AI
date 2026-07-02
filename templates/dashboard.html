@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="animate-fade-in-up">
+    <div class="d-flex justify-content-between align-items-center mb-5 flex-wrap gap-3">
+        <div>
+            <h1 class="fw-bold mb-1">Analytics Dashboard</h1>
+            <p class="text-muted mb-0">Real-time insights from our operational model training metrics and saved historical ledger sets.</p>
+        </div>
+        <span class="badge bg-indigo p-2 px-3 rounded-pill font-monospace shadow-sm">Pipeline Status: Operational</span>
+    </div>
+
+    {% set summary_metrics_total = summary.total_predictions %}
+    {% set summary_metrics_conf = summary.avg_confidence %}
+    {% set summary_model_name = summary.winning_model %}
+    {% include 'components/cards.html' %}
+
+    <div class="row g-4 mt-2">
+        <div class="col-lg-7">
+            <div class="glass-card p-4 h-100">
+                <h4 class="fw-bold mb-3 h5"><i class="bi bi-bar-chart-line-fill me-2 text-primary"></i>Algorithmic Performance Comparison</h4>
+                <div class="chart-container" style="height: 320px;">
+                    <canvas id="modelComparisonChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="glass-card p-4 h-100">
+                <h4 class="fw-bold mb-3 h5"><i class="bi bi-pie-chart-fill me-2 text-pink"></i>Validation Benchmarks</h4>
+                {% if summary.metrics_log and summary.winning_model in summary.metrics_log %}
+                    {% set active_metrics = summary.metrics_log[summary.winning_model] %}
+                    <ul class="list-group list-group-flush bg-transparent">
+                        <li class="list-group-item bg-transparent text-reset d-flex justify-content-between align-items-center border-secondary border-opacity-10 px-0">
+                            <span>Accuracy Score</span><strong class="text-success">{{ (active_metrics.accuracy * 100)|round(2) }}%</strong>
+                        </li>
+                        <li class="list-group-item bg-transparent text-reset d-flex justify-content-between align-items-center border-secondary border-opacity-10 px-0">
+                            <span>Precision Evaluation</span><strong class="text-info">{{ (active_metrics.precision * 100)|round(2) }}%</strong>
+                        </li>
+                        <li class="list-group-item bg-transparent text-reset d-flex justify-content-between align-items-center border-secondary border-opacity-10 px-0">
+                            <span>Recall Metric</span><strong class="text-warning">{{ (active_metrics.recall * 100)|round(2) }}%</strong>
+                        </li>
+                        <li class="list-group-item bg-transparent text-reset d-flex justify-content-between align-items-center border-0 px-0">
+                            <span>Balanced F1 Composite</span><strong class="text-pink">{{ (active_metrics.f1_score * 100)|round(2) }}%</strong>
+                        </li>
+                    </ul>
+                {% else %}
+                    <p class="text-muted text-sm">Model metrics unavailable. Run training scripts to register configurations.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-4">
+        <h3 class="fw-bold mt-5 mb-2 h4 text-center">Exploratory Data Analysis (EDA) Pipeline Exports</h3>
+        <div class="col-md-6 col-xl-4">
+            <div class="glass-card p-3 text-center">
+                <h5 class="fw-semibold text-sm mb-2">Target Class Balancing Countplot</h5>
+                <img src="{{ url_for('static', filename='plots/countplot.png') }}" class="img-fluid rounded border border-secondary border-opacity-10" alt="EDA Countplot" onerror="this.src='https://placehold.co/600x400?text=Run+generate_dataset.py'">
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-4">
+            <div class="glass-card p-3 text-center">
+                <h5 class="fw-semibold text-sm mb-2">Feature Correlation Heatmap Matrix</h5>
+                <img src="{{ url_for('static', filename='plots/heatmap.png') }}" class="img-fluid rounded border border-secondary border-opacity-10" alt="EDA Heatmap" onerror="this.src='https://placehold.co/600x400?text=Run+generate_dataset.py'">
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-4 mx-auto">
+            <div class="glass-card p-3 text-center">
+                <h5 class="fw-semibold text-sm mb-2">Stress Levels across Productivity Cohorts</h5>
+                <img src="{{ url_for('static', filename='plots/boxplot.png') }}" class="img-fluid rounded border border-secondary border-opacity-10" alt="EDA Boxplot" onerror="this.src='https://placehold.co/600x400?text=Run+generate_dataset.py'">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const rawModelMetrics = JSON.parse('{{ summary.metrics_log | tojson | safe }}');
+        if (rawModelMetrics && Object.keys(rawModelMetrics).length > 0) {
+            initializeClientSideCharts(rawModelMetrics);
+        }
+    });
+</script>
+{% endblock %}

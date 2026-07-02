@@ -1,0 +1,38 @@
+/* Dashboard Sub-System Metrics Design Layout styles */
+.metric-card {
+    padding: 24px;
+    text-align: center;
+}
+
+.metric-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    background: linear-gradient(45deg, #6366f1, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.chart-container {
+    position: relative;
+    width: 100%;
+    padding: 15px;
+}
+
+.table-responsive-custom {
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+body.dark-theme .table-custom {
+    color: #f8fafc;
+    background-color: #1e293b;
+}
+
+body.dark-theme .table-custom th {
+    background-color: #0f172a;
+    border-color: rgba(255,255,255,0.1);
+}
+
+body.dark-theme .table-custom td {
+    border-color: rgba(255,255,255,0.05);
+}

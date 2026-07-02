@@ -1,0 +1,25 @@
+<nav class="navbar navbar-expand-lg custom-navbar fixed-top">
+    <div class="container">
+        <a class="navbar-brand d-flex align-items-center fw-bold text-gradient" href="{{ url_for('index') }}" style="background: linear-gradient(45deg, #818cf8, #ec4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            <i class="bi bi-cpu-fill me-2 text-indigo"></i> StudyCompanion AI
+        </a>
+        <button class="navbar-toggler border-0 text-white" type="button" data-bs-toggle="collapse" data-bs-target="#mainAppNavbar" aria-controls="mainAppNavbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="mainAppNavbar">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center gap-2">
+                <li class="nav-item"><a class="nav-link text-reset fw-semibold" href="{{ url_for('index') }}">Home</a></li>
+                <li class="nav-item"><a class="nav-link text-reset fw-semibold" href="{{ url_for('predict') }}">Predictor</a></li>
+                <li class="nav-item"><a class="nav-link text-reset fw-semibold" href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link text-reset fw-semibold" href="{{ url_for('history') }}">History</a></li>
+                <li class="nav-item"><a class="nav-link text-reset fw-semibold" href="{{ url_for('about') }}">About</a></li>
+                <li class="nav-item"><a class="nav-link text-reset fw-semibold" href="{{ url_for('contact') }}">Contact</a></li>
+                <li class="nav-item ms-lg-3">
+                    <button class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center" id="theme-toggle-btn" style="width: 40px; height: 40px;">
+                        <i class="bi bi-sun-fill text-warning" id="theme-icon"></i>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

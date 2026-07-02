@@ -1,0 +1,92 @@
+:root {
+    --bg-light: #f5f7fb;
+    --bg-dark: #0f172a;
+    --card-light: rgba(255, 255, 255, 0.85);
+    --card-dark: rgba(30, 41, 59, 0.75);
+    --text-light: #1e293b;
+    --text-dark: #f8fafc;
+    --accent-primary: #6366f1;
+    --accent-secondary: #4f46e5;
+    --glass-border-light: rgba(255, 255, 255, 0.4);
+    --glass-border-dark: rgba(255, 255, 255, 0.08);
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    transition: background-color 0.4s ease, color 0.4s ease;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+body.light-theme {
+    background: linear-gradient(135deg, #e0e7ff, #f5f7fb);
+    color: var(--text-light);
+}
+
+body.dark-theme {
+    background: linear-gradient(135deg, #090d16, #1e1b4b);
+    color: var(--text-dark);
+}
+
+/* Glassmorphism Template Architecture Rules */
+.glass-card {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 16px;
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.3s ease;
+}
+
+body.light-theme .glass-card {
+    background: var(--card-light);
+    border: 1px solid var(--glass-border-light);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.06);
+}
+
+body.dark-theme .glass-card {
+    background: var(--card-dark);
+    border: 1px solid var(--glass-border-dark);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+
+.glass-card:hover {
+    transform: translateY(-4px);
+}
+
+/* Sticky Custom Navbar */
+.custom-navbar {
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid transparent;
+    transition: background-color 0.3s;
+}
+
+body.light-theme .custom-navbar {
+    background: rgba(255, 255, 255, 0.8);
+    border-color: rgba(0,0,0,0.05);
+}
+
+body.dark-theme .custom-navbar {
+    background: rgba(15, 23, 42, 0.8);
+    border-color: rgba(255,255,255,0.05);
+}
+
+/* Button UI Definitions */
+.btn-gradient {
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    color: white !important;
+    border: none;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 10px 24px;
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+.btn-gradient:hover {
+    opacity: 0.95;
+    transform: scale(1.02);
+}
+
+footer {
+    margin-top: auto;
+    padding: 20px 0;
+}
